@@ -1,86 +1,102 @@
 require("dotenv").config();
-const express = require("express");
 const { Client, GatewayIntentBits } = require("discord.js");
+const express = require("express");
 
-// Keep Railway alive
+// --- Express keep-alive server (required for Railway) ---
 const app = express();
-app.get("/", (req, res) => res.send("Bot is running"));
-app.listen(3000);
+app.get("/", (req, res) => res.send("Bot is running!"));
+app.listen(process.env.PORT || 3000);
 
-// Discord client
+// --- Discord Client ---
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
 });
 
 client.once("ready", () => {
-  console.log(`Logged in as ${client.user.tag}`);
+    console.log(`Logged in as ${client.user.tag}`);
 });
 
-// !powerball 5 1 69
+// --- !powerball count max ---
 client.on("messageCreate", (message) => {
-  if (!message.content.startsWith("!powerball")) return;
+    if (!message.content.startsWith("!powerball")) return;
 
-  const args = message.content.split(" ");
-  if (args.length !== 4) {
-    message.reply("Usage: !powerball <count> <min> <max>");
-    return;
-  }
+    const args = message.content.split(" ");
 
-  const drawCount = parseInt(args[1]);
-  const min = parseInt(args[2]);
-  const max = parseInt(args[3]);
+    if (args.length < 3) {
+        message.reply("Usage: !powerball count max");
+        return;
+    }
 
-  if (drawCount > max - min + 1) {
-    message.reply("❌ Not enough numbers in the range.");
-    return;
-  }
+    const count = parseInt(args[1]);
+    const max = parseInt(args[2]);
 
-  const numbers = [];
-  while (numbers.length < drawCount) {
-    const n = Math.floor(Math.random() * (max - min + 1)) + min;
-    if (!numbers.includes(n)) numbers.push(n);
-  }
+    if (isNaN(count) || isNaN(max) || count < 1 || max < 1) {
+        message.reply("Both count and max must be positive numbers.");
+        return;
+    }
 
-  numbers.sort((a, b) => a - b);
-  message.reply(`🎱 Your numbers: ${numbers.join(", ")}`);
+    if (count > max) {
+        message.reply("Count cannot be greater than max.");
+        return;
+    }
+
+    const numbers = [];
+    while (numbers.length < count) {
+        const num = Math.floor(Math.random() * max) + 1;
+        if (!numbers.includes(num)) numbers.push(num);
+    }
+
+    numbers.sort((a, b) => a - b);
+    message.reply(`Your Powerball numbers: ${numbers.join(", ")}`);
 });
 
-// !customball 5 1 69 1 26
+// --- !customballs mainCount mainMax specialCount specialMax ---
 client.on("messageCreate", (message) => {
-  if (!message.content.startsWith("!customball")) return;
+    if (!message.content.startsWith("!customballs")) return;
 
-  const args = message.content.split(" ");
-  if (args.length !== 6) {
-    message.reply("Usage: !customball <mainCount> <mainMin> <mainMax> <specialMin> <specialMax>");
-    return;
-  }
+    const args = message.content.split(" ");
 
-  const mainCount = parseInt(args[1]);
-  const mainMin = parseInt(args[2]);
-  const mainMax = parseInt(args[3]);
-  const specialMin = parseInt(args[4]);
-  const specialMax = parseInt(args[5]);
+    if (args.length < 5) {
+        message.reply("Usage: !customballs mainCount mainMax specialCount specialMax");
+        return;
+    }
 
-  if (mainCount > mainMax - mainMin + 1) {
-    message.reply("❌ Not enough numbers for main balls.");
-    return;
-  }
+    const mainCount = parseInt(args[1]);
+    const mainMax = parseInt(args[2]);
+    const specialCount = parseInt(args[3]);
+    const specialMax = parseInt(args[4]);
 
-  const main = [];
-  while (main.length < mainCount) {
-    const n = Math.floor(Math.random() * (mainMax - mainMin + 1)) + mainMin;
-    if (!main.includes(n)) main.push(n);
-  }
+    if ([mainCount, mainMax, specialCount, specialMax].some(isNaN)) {
+        message.reply("All values must be numbers.");
+        return;
+    }
 
-  main.sort((a, b) => a - b);
+    if (mainCount > mainMax) {
+        message.reply("Not enough numbers for main balls.");
+        return;
+    }
 
-  const special = Math.floor(Math.random() * (specialMax - specialMin + 1)) + specialMin;
+    const main = [];
+    while (main.length < mainCount) {
+        const num = Math.floor(Math.random() * mainMax) + 1;
+        if (!main.includes(num)) main.push(num);
+    }
 
-  message.reply(`⚪ Main balls: ${main.join(", ")}\n🔴 Special ball: ${special}`);
+    const special = [];
+    while (special.length < specialCount) {
+        const num = Math.floor(Math.random() * specialMax) + 1;
+        if (!special.includes(num)) special.push(num);
+    }
+
+    main.sort((a, b) => a - b);
+    special.sort((a, b) => a - b);
+
+    message.reply(`🎱 Main balls: ${main.join(", ")} | Special balls: ${special.join(", ")}`);
 });
 
+// --- Login ---
 client.login(process.env.TOKEN);
