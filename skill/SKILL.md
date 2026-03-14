@@ -19,17 +19,22 @@ If missing: `npm install -g zalo-agent-cli`
 
 ### Login (CRITICAL: agent must follow this exact flow)
 
-**Step 1:** Run login in background so agent can talk to user immediately:
+**Step 1:** Get server IP (for VPS) and run login in background:
 ```bash
+# Get public IP (pick one that works)
+SERVER_IP=$(curl -s ifconfig.me || curl -s ipinfo.io/ip || hostname -I | awk '{print $1}')
+echo "Server IP: $SERVER_IP"
+
+# Run login in background
 zalo-agent login --qr-url &
-# or with proxy:
-zalo-agent login --qr-url --proxy "http://u:p@h:port" &
 ```
 
-**Step 2:** Wait 5 seconds for QR generation, then IMMEDIATELY tell user:
-- On local: "Open http://localhost:18927/qr to scan QR with Zalo app"
-- On VPS: "Open http://<server-ip>:18927/qr in your browser to scan QR"
-- Also: QR image saved at `~/.zalo-agent-cli/qr.png`
+**Step 2:** Wait 5 seconds, then IMMEDIATELY tell user the QR URL with real IP:
+```bash
+sleep 5
+echo "QR ready at http://$SERVER_IP:18927/qr"
+```
+Tell user: "Open **http://{SERVER_IP}:18927/qr** in your browser to scan QR with Zalo app. QR expires in 60 seconds."
 
 **Step 3:** Wait for user to confirm they scanned, then check if login succeeded.
 
@@ -90,10 +95,11 @@ zalo-agent logout --purge  # Delete everything
 
 1. Check status: `zalo-agent status`
 2. If not logged in:
-   a. Run `zalo-agent login --qr-url &` (BACKGROUND — do not block)
-   b. Wait 5s: `sleep 5`
-   c. IMMEDIATELY tell user: "Open http://localhost:18927/qr (or http://<server-ip>:18927/qr on VPS) to scan QR with Zalo app"
-   d. Wait for user confirmation, then verify login: `zalo-agent status`
+   a. Get server IP: `SERVER_IP=$(curl -s ifconfig.me || hostname -I | awk '{print $1}')`
+   b. Run `zalo-agent login --qr-url &` (BACKGROUND — do not block)
+   c. Wait 5s: `sleep 5`
+   d. IMMEDIATELY tell user: "Open **http://{SERVER_IP}:18927/qr** to scan QR with Zalo. Expires in 60s."
+   e. Wait for user confirmation, then verify: `zalo-agent status`
 3. Execute requested command
 4. Use `--json` flag when parsing output programmatically
 
