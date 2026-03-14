@@ -6,7 +6,7 @@
 
 import http from "http";
 import { readFileSync, existsSync } from "fs";
-import { info, warning } from "./output.js";
+import { info } from "./output.js";
 
 /**
  * Start a temporary HTTP server that serves the QR image.
@@ -18,8 +18,12 @@ export function startQrServer(qrImagePath, port = 18927) {
     const server = http.createServer((req, res) => {
         if (req.url === "/qr" || req.url === "/") {
             if (!existsSync(qrImagePath)) {
-                res.writeHead(404, { "Content-Type": "text/plain" });
-                res.end("QR not generated yet. Retry in a moment.");
+                res.writeHead(200, { "Content-Type": "text/html" });
+                res.end(`<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="2">
+<title>Waiting for QR...</title></head>
+<body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#111;color:#fff;font-family:system-ui">
+<p>QR code generating... auto-refreshing in 2s</p></body></html>`);
                 return;
             }
             const img = readFileSync(qrImagePath);
@@ -43,11 +47,12 @@ p{color:#888;font-size:0.9rem;margin-top:1rem}</style></head>
         }
     });
 
-    // Listen on localhost only (security: not exposed externally)
-    server.listen(port, "127.0.0.1", () => {
-        const url = `http://localhost:${port}/qr`;
-        info(`QR available at: ${url}`);
-        warning(`If remote, use SSH tunnel: ssh -L ${port}:localhost:${port} user@server`);
+    // Listen on all interfaces so VPS users can access directly
+    // QR codes are one-time use and expire quickly — low security risk
+    server.listen(port, "0.0.0.0", () => {
+        info(`QR available at: http://localhost:${port}/qr`);
+        info(`On VPS, open: http://<your-server-ip>:${port}/qr`);
+        info(`Or SSH tunnel: ssh -L ${port}:localhost:${port} user@server`);
     });
 
     server.on("error", (err) => {
