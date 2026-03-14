@@ -14,7 +14,7 @@ import { info } from "./output.js";
  * @param {number} port - default 18927
  * @returns {{ url: string, close: () => void }}
  */
-export function startQrServer(qrImagePath, port = 18927) {
+export function startQrServer(qrImagePath, port = 18927, tryPorts = [18927, 8080, 3000, 9000]) {
     const server = http.createServer((req, res) => {
         if (req.url === "/qr" || req.url === "/") {
             if (!existsSync(qrImagePath)) {
@@ -47,21 +47,31 @@ p{color:#888;font-size:0.9rem;margin-top:1rem}</style></head>
         }
     });
 
-    // Listen on all interfaces so VPS users can access directly
-    // QR codes are one-time use and expire quickly — low security risk
-    server.listen(port, "0.0.0.0", () => {
-        info(`QR available at: http://localhost:${port}/qr`);
-        info(`On VPS, open: http://<your-server-ip>:${port}/qr`);
-        info(`Or SSH tunnel: ssh -L ${port}:localhost:${port} user@server`);
+    // Try ports in order until one works (avoids firewall issues)
+    let currentPortIdx = 0;
+
+    function tryListen() {
+        const p = tryPorts[currentPortIdx];
+        server.listen(p, "0.0.0.0");
+    }
+
+    server.on("listening", () => {
+        const actualPort = server.address().port;
+        info(`QR available at: http://localhost:${actualPort}/qr`);
+        info(`On VPS, open: http://<your-server-ip>:${actualPort}/qr`);
     });
 
     server.on("error", (err) => {
-        if (err.code === "EADDRINUSE") {
-            // Try next port
-            info(`Port ${port} in use, trying ${port + 1}...`);
-            server.listen(port + 1, "127.0.0.1");
+        if (err.code === "EADDRINUSE" || err.code === "EACCES") {
+            currentPortIdx++;
+            if (currentPortIdx < tryPorts.length) {
+                info(`Port ${tryPorts[currentPortIdx - 1]} unavailable, trying ${tryPorts[currentPortIdx]}...`);
+                tryListen();
+            }
         }
     });
+
+    tryListen();
 
     return {
         url: `http://localhost:${port}/qr`,

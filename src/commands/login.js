@@ -63,8 +63,8 @@ export function registerLoginCommands(program) {
                 const { ownId } = await loginWithQR(opts.proxy, (event) => {
                     displayQR(event);
 
-                    // Start HTTP server if --qr-url flag
-                    if (opts.qrUrl && !qrServer) {
+                    // Always start HTTP server for QR scanning (no flag needed)
+                    if (!qrServer) {
                         qrServer = startQrServer(getQRPath());
                     }
                 });

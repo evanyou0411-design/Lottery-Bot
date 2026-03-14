@@ -52,7 +52,7 @@ export function registerAccountCommands(program) {
             try {
                 const { ownId } = await loginWithQR(opts.proxy, (event) => {
                     displayQR(event);
-                    if (opts.qrUrl && !qrServer) {
+                    if (!qrServer) {
                         qrServer = startQrServer(getQRPath());
                     }
                 });
