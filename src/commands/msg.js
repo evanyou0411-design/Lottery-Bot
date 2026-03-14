@@ -13,7 +13,10 @@ export function registerMsgCommands(program) {
     msg.command("send <threadId> <message>")
         .description("Send a text message")
         .option("-t, --type <n>", "Thread type: 0=User, 1=Group", "0")
-        .option("--react <icon>", "Auto-react to the sent message (e.g. :> for haha)")
+        .option(
+            "--react <icon>",
+            "Auto-react to sent message. Codes: :> (haha), /-heart (heart), /-strong (like), :o (wow), :-(( (cry), :-h (angry)",
+        )
         .action(async (threadId, message, opts) => {
             try {
                 // Capture clientId before send — zca-js uses Date.now() internally
@@ -204,9 +207,14 @@ export function registerMsgCommands(program) {
         });
 
     msg.command("react <msgId> <threadId> <reaction>")
-        .description("React to a message with an emoji")
+        .description(
+            "React to a message. Reaction codes: :> (haha), /-heart (heart), /-strong (like), :o (wow), :-(( (cry), :-h (angry)",
+        )
         .option("-t, --type <n>", "Thread type: 0=User, 1=Group", "0")
-        .option("-c, --cli-msg-id <id>", "Client message ID (defaults to msgId)")
+        .option(
+            "-c, --cli-msg-id <id>",
+            "Client message ID (required for reaction to appear, get from msg listen --json)",
+        )
         .action(async (msgId, threadId, reaction, opts) => {
             try {
                 // zca-js addReaction(icon, dest) — dest needs msgId + cliMsgId
@@ -223,7 +231,9 @@ export function registerMsgCommands(program) {
         });
 
     msg.command("listen")
-        .description("Listen for incoming messages (Ctrl+C to stop)")
+        .description(
+            "Listen for incoming messages in real-time via WebSocket. Outputs msgId + cliMsgId needed for react. Use --json for machine parsing.",
+        )
         .action(async () => {
             try {
                 const api = getApi();
