@@ -52,7 +52,9 @@ export function registerFriendCommands(program) {
             try {
                 const result = await getApi().findUser(query);
                 if (!result || (!result.uid && !result?.data?.uid)) {
-                    error(`No Zalo user found for "${query}". User may not exist, has disabled phone search, or phone is not registered on Zalo.`);
+                    error(
+                        `No Zalo user found for "${query}". User may not exist, has disabled phone search, or phone is not registered on Zalo.`,
+                    );
                     return;
                 }
                 output(result, program.opts().json, () => {
