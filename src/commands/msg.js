@@ -13,10 +13,26 @@ export function registerMsgCommands(program) {
     msg.command("send <threadId> <message>")
         .description("Send a text message")
         .option("-t, --type <n>", "Thread type: 0=User, 1=Group", "0")
+        .option("--react <icon>", "Auto-react to the sent message (e.g. :> for haha)")
         .action(async (threadId, message, opts) => {
             try {
+                // Capture clientId before send — zca-js uses Date.now() internally
+                const cliMsgId = String(Date.now());
                 const result = await getApi().sendMessage(message, threadId, Number(opts.type));
+                // Include cliMsgId in output for later use with react command
+                result.cliMsgId = cliMsgId;
                 output(result, program.opts().json, () => success("Message sent"));
+
+                // Auto-react if --react flag provided
+                if (opts.react && result.message?.msgId) {
+                    const dest = {
+                        data: { msgId: String(result.message.msgId), cliMsgId },
+                        threadId,
+                        type: Number(opts.type),
+                    };
+                    await getApi().addReaction(opts.react, dest);
+                    success(`Auto-reacted with '${opts.react}'`);
+                }
             } catch (e) {
                 error(e.message);
             }
