@@ -95,7 +95,7 @@ setInterval(async()=>{
         info(`QR available at: http://localhost:${actualPort}/qr`);
         // Auto-detect public IP for VPS users
         try {
-            const res = await nodefetch("https://ifconfig.me", { timeout: 3000 });
+            const res = await nodefetch("https://api.ipify.org", { timeout: 3000 });
             const ip = (await res.text()).trim();
             if (ip) info(`On VPS, open: http://${ip}:${actualPort}/qr`);
         } catch {
