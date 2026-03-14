@@ -19,6 +19,8 @@ import { registerGroupCommands } from "./commands/group.js";
 import { registerConvCommands } from "./commands/conv.js";
 import { registerAccountCommands } from "./commands/account.js";
 import { autoLogin } from "./core/zalo-client.js";
+import { checkForUpdates, selfUpdate } from "./utils/update-check.js";
+import { success, error } from "./utils/output.js";
 
 const program = new Command();
 
@@ -34,10 +36,24 @@ program
         }
         // Auto-login before any command that needs it (skip for login/account commands)
         const cmdName = thisCommand.args?.[0] || thisCommand.name();
-        const skipAutoLogin = ["login", "account", "help", "version"].includes(cmdName);
+        const skipAutoLogin = ["login", "account", "help", "version", "update"].includes(cmdName);
         if (!skipAutoLogin) {
             await autoLogin(program.opts().json);
         }
+        // Non-blocking update check (skip for update command itself)
+        if (cmdName !== "update") {
+            checkForUpdates(pkg.version, program.opts().json);
+        }
+    });
+
+// Self-update command
+program
+    .command("update")
+    .description("Update zalo-agent-cli to the latest version")
+    .action(() => {
+        const ok = selfUpdate();
+        if (ok) success(`Updated to latest version`);
+        else error("Update failed. Try manually: npm install -g zalo-agent-cli@latest");
     });
 
 // Register all command groups
