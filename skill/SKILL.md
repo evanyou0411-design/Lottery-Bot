@@ -17,13 +17,28 @@ If missing: `npm install -g zalo-agent-cli`
 
 ## Quick Reference
 
-### Login
+### Login (CRITICAL: agent must follow this exact flow)
+
+**Step 1:** Run login in background so agent can talk to user immediately:
 ```bash
-zalo-agent login                              # QR scan (interactive)
-zalo-agent login --proxy "http://u:p@h:port"  # QR via proxy
-zalo-agent login --credentials ./creds.json   # Headless (no QR)
+zalo-agent login --qr-url &
+# or with proxy:
+zalo-agent login --qr-url --proxy "http://u:p@h:port" &
 ```
-After `login`, open `~/.zalo-agent-cli/qr.png` for user to scan with Zalo app.
+
+**Step 2:** Wait 5 seconds for QR generation, then IMMEDIATELY tell user:
+- On local: "Open http://localhost:18927/qr to scan QR with Zalo app"
+- On VPS: "Open http://<server-ip>:18927/qr in your browser to scan QR"
+- Also: QR image saved at `~/.zalo-agent-cli/qr.png`
+
+**Step 3:** Wait for user to confirm they scanned, then check if login succeeded.
+
+**Headless (no QR):** Use exported credentials — no human interaction needed:
+```bash
+zalo-agent login --credentials ./creds.json
+```
+
+**IMPORTANT:** QR expires in ~60 seconds. Agent MUST send URL to user BEFORE waiting for result. Never run login foreground — always background with `&`.
 
 ### Send Messages
 ```bash
@@ -74,7 +89,11 @@ zalo-agent logout --purge  # Delete everything
 ## Agent Workflow
 
 1. Check status: `zalo-agent status`
-2. If not logged in → run `zalo-agent login`, then `open ~/.zalo-agent-cli/qr.png` and tell user to scan
+2. If not logged in:
+   a. Run `zalo-agent login --qr-url &` (BACKGROUND — do not block)
+   b. Wait 5s: `sleep 5`
+   c. IMMEDIATELY tell user: "Open http://localhost:18927/qr (or http://<server-ip>:18927/qr on VPS) to scan QR with Zalo app"
+   d. Wait for user confirmation, then verify login: `zalo-agent status`
 3. Execute requested command
 4. Use `--json` flag when parsing output programmatically
 
