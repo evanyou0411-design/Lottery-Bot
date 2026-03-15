@@ -111,7 +111,26 @@ zalo-agent msg send <THREAD_ID> "Hello group!" -t 1
 zalo-agent friend list
 ```
 
-#### 4. Check status
+#### 5. Manage your profile
+
+```bash
+# View your profile
+zalo-agent profile me
+
+# Change avatar
+zalo-agent profile avatar /path/to/photo.jpg
+
+# Update bio
+zalo-agent profile bio "Phụ tùng ô tô chính hãng"
+
+# View privacy settings
+zalo-agent profile settings
+
+# Update a setting (e.g. hide online status)
+zalo-agent profile set online-status 0
+```
+
+#### 6. Check status
 
 ```bash
 zalo-agent status
@@ -196,6 +215,19 @@ zalo-agent whoami
 | `conv read <threadId> [-t 0\|1]` | Mark as read |
 | `conv unread <threadId> [-t 0\|1]` | Mark as unread |
 | `conv delete <threadId> [-t 0\|1]` | Delete conversation |
+
+#### Profile (`profile`)
+
+| Command | Description |
+|---------|-------------|
+| `profile me` | Show your profile (name, phone, avatar, etc.) |
+| `profile avatar <imagePath>` | Change profile avatar |
+| `profile bio [text]` | View or update bio/status |
+| `profile update [-n name] [-d YYYY-MM-DD] [-g 0\|1]` | Update name, birthday, gender |
+| `profile settings` | View privacy settings |
+| `profile set <setting> <value>` | Update a privacy setting |
+
+**Privacy settings:** `online-status`, `seen-status`, `birthday`, `receive-msg`, `accept-call`, `add-by-phone`, `add-by-qr`, `add-by-group`, `recommend`
 
 #### Accounts (`account`)
 
@@ -415,6 +447,25 @@ zalo-agent msg send <THREAD_ID> "Xin chào nhóm!" -t 1
 
 ```bash
 zalo-agent friend list
+```
+
+#### 5. Quản lý hồ sơ cá nhân
+
+```bash
+# Xem hồ sơ
+zalo-agent profile me
+
+# Đổi ảnh đại diện
+zalo-agent profile avatar /đường/dẫn/ảnh.jpg
+
+# Cập nhật tiểu sử
+zalo-agent profile bio "Phụ tùng ô tô chính hãng"
+
+# Xem cài đặt quyền riêng tư
+zalo-agent profile settings
+
+# Thay đổi cài đặt (VD: ẩn trạng thái online)
+zalo-agent profile set online-status 0
 ```
 
 ### Danh sách lệnh
