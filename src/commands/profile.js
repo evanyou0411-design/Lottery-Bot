@@ -18,7 +18,7 @@ const SETTING_MAP = {
         label: "Display seen status",
         values: { 0: "hidden", 1: "visible" },
     },
-    "birthday": {
+    birthday: {
         key: "view_birthday",
         label: "Birthday visibility",
         values: { 0: "hidden", 1: "full (day/month/year)", 2: "partial (day/month)" },
@@ -48,7 +48,7 @@ const SETTING_MAP = {
         label: "Find via group",
         values: { 0: "disabled", 1: "enabled" },
     },
-    "recommend": {
+    recommend: {
         key: "display_on_recommend_friend",
         label: "Show in friend recommendations",
         values: { 0: "disabled", 1: "enabled" },
@@ -111,7 +111,9 @@ export function registerProfileCommands(program) {
                     } else {
                         output({ bio: newBio, requested: text }, program.opts().json, () => {
                             success(`Bio update request sent: "${text}"`);
-                            info("Note: Zalo may take time to reflect changes, or bio may not be supported for your account type.");
+                            info(
+                                "Note: Zalo may take time to reflect changes, or bio may not be supported for your account type.",
+                            );
                         });
                     }
                 }
@@ -145,7 +147,7 @@ export function registerProfileCommands(program) {
                     profile: {
                         name: opts.name || p.displayName || p.zaloName,
                         dob: opts.dob || currentDob,
-                        gender: opts.gender !== undefined ? Number(opts.gender) : p.gender ?? 0,
+                        gender: opts.gender !== undefined ? Number(opts.gender) : (p.gender ?? 0),
                     },
                 };
                 const result = await getApi().updateProfile(payload);
@@ -193,14 +195,14 @@ export function registerProfileCommands(program) {
                 const numVal = Number(value);
                 if (!(numVal in meta.values)) {
                     error(
-                        `Invalid value for ${setting}. Valid: ${Object.entries(meta.values).map(([k, v]) => `${k}=${v}`).join(", ")}`,
+                        `Invalid value for ${setting}. Valid: ${Object.entries(meta.values)
+                            .map(([k, v]) => `${k}=${v}`)
+                            .join(", ")}`,
                     );
                     return;
                 }
                 const result = await getApi().updateSettings(meta.key, numVal);
-                output(result, program.opts().json, () =>
-                    success(`${meta.label}: ${meta.values[numVal]} (${numVal})`),
-                );
+                output(result, program.opts().json, () => success(`${meta.label}: ${meta.values[numVal]} (${numVal})`));
             } catch (e) {
                 error(`Setting update failed: ${e.message}`);
             }
