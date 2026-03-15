@@ -307,12 +307,18 @@ export function registerMsgCommands(program) {
             try {
                 const api = getApi();
                 const search = await api.searchSticker(keyword);
-                const stickerId = search?.[0]?.stickerId || "";
-                if (!stickerId) {
+                const first = search?.[0];
+                if (!first) {
                     error("No sticker found");
                     return;
                 }
-                const result = await api.sendSticker(stickerId, threadId, Number(opts.type));
+                // sendSticker expects {id, cateId, type} object
+                const stickerObj = {
+                    id: first.sticker_id || first.stickerId || first.id,
+                    cateId: first.cate_id || first.cateId,
+                    type: first.type || 7,
+                };
+                const result = await api.sendSticker(stickerObj, threadId, Number(opts.type));
                 output(result, program.opts().json, () => success("Sticker sent"));
             } catch (e) {
                 error(e.message);
