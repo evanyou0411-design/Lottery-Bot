@@ -231,6 +231,35 @@ zalo-agent whoami
 
 **Privacy settings:** `online-status`, `seen-status`, `birthday`, `receive-msg`, `accept-call`, `add-by-phone`, `add-by-qr`, `add-by-group`, `recommend`
 
+#### Polls (`poll`)
+
+| Command | Description |
+|---------|-------------|
+| `poll create <groupId> <question> <options...>` | Create a poll (see flags below) |
+| `poll info <pollId>` | View poll details and vote results |
+| `poll vote <pollId> <optionIds...>` | Vote on a poll (option IDs from `poll info`) |
+| `poll unvote <pollId>` | Remove your vote |
+| `poll add-option <pollId> <options...> [--vote]` | Add new options to a poll |
+| `poll lock <pollId>` | Close a poll (no more votes) |
+| `poll share <pollId>` | Share a poll |
+
+**Poll create flags:** `--multi` (multiple choices), `--add-options` (members can add options), `--anonymous` (hide voters), `--hide-preview` (hide results until voted), `--expire <minutes>` (auto-close)
+
+**Example:**
+```bash
+# Create a multi-choice poll with 3 options, auto-close after 60 minutes
+zalo-agent poll create <groupId> "Chọn ngày họp" "Thứ 2" "Thứ 4" "Thứ 6" --multi --expire 60
+
+# View results
+zalo-agent poll info <pollId>
+
+# Vote for option IDs 123 and 456
+zalo-agent poll vote <pollId> 123 456
+
+# Close the poll
+zalo-agent poll lock <pollId>
+```
+
 #### Accounts (`account`)
 
 | Command | Description |
@@ -468,6 +497,22 @@ zalo-agent profile settings
 
 # Thay đổi cài đặt (VD: ẩn trạng thái online)
 zalo-agent profile set online-status 0
+```
+
+#### 6. Tạo khảo sát (Poll) trong nhóm
+
+```bash
+# Tạo poll multi-choice, tự đóng sau 60 phút
+zalo-agent poll create <groupId> "Chọn ngày họp" "Thứ 2" "Thứ 4" "Thứ 6" --multi --expire 60
+
+# Xem kết quả
+zalo-agent poll info <pollId>
+
+# Bỏ phiếu (dùng option ID từ poll info)
+zalo-agent poll vote <pollId> 123 456
+
+# Đóng poll
+zalo-agent poll lock <pollId>
 ```
 
 ### Danh sách lệnh
