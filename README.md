@@ -804,6 +804,10 @@ Nội dung chuyển khoản: tối đa 50 ký tự (theo chuẩn VietQR/NAPAS).
 
 Đây là dự án **không chính thức** và **không liên kết với Zalo hay Tập đoàn VNG**. Xem [DISCLAIMER.md](DISCLAIMER.md) để biết chi tiết.
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=PhucMPham/zalo-agent-cli&type=Date)](https://star-history.com/#PhucMPham/zalo-agent-cli&Date)
+
 ### Giấy phép
 
 [MIT](LICENSE)
