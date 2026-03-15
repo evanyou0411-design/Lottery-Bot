@@ -21,7 +21,9 @@ import { registerAccountCommands } from "./commands/account.js";
 import { registerListenCommand } from "./commands/listen.js";
 import { autoLogin } from "./core/zalo-client.js";
 import { checkForUpdates, selfUpdate } from "./utils/update-check.js";
-import { success, error } from "./utils/output.js";
+import { success, error, warning } from "./utils/output.js";
+
+const DISCLAIMER = "This tool uses unofficial Zalo APIs (zca-js) — your account may be banned. Use at your own risk. | Tool này dùng API Zalo không chính thức (zca-js) — account có thể bị ban. Tự chịu trách nhiệm.";
 
 const program = new Command();
 
@@ -34,6 +36,9 @@ program
         // Suppress zca-js internal logs in JSON mode to keep stdout clean for piping
         if (program.opts().json) {
             process.env.ZALO_JSON_MODE = "1";
+        } else {
+            warning(DISCLAIMER);
+            console.log();
         }
         // Auto-login before any command that needs it (skip for login/account commands)
         const cmdName = thisCommand.args?.[0] || thisCommand.name();
