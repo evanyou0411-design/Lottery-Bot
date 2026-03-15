@@ -260,6 +260,37 @@ zalo-agent poll vote <pollId> 123 456
 zalo-agent poll lock <pollId>
 ```
 
+#### Reminders (`reminder`)
+
+| Command | Description |
+|---------|-------------|
+| `reminder create <threadId> <title> [-t 0\|1] [--time "YYYY-MM-DD HH:mm"] [--repeat mode] [--emoji]` | Create a reminder |
+| `reminder list <threadId> [-t 0\|1] [-n count]` | List reminders |
+| `reminder info <reminderId>` | View reminder details (group only) |
+| `reminder responses <reminderId>` | View who accepted/rejected (group only) |
+| `reminder edit <reminderId> <threadId> <title> [-t 0\|1] [--time] [--repeat] [--emoji]` | Edit a reminder |
+| `reminder remove <reminderId> <threadId> [-t 0\|1]` | Remove a reminder |
+
+**Repeat modes:** `none`, `daily`, `weekly`, `monthly`
+
+**Example:**
+```bash
+# Create a daily reminder in a group at 9:00 AM tomorrow
+zalo-agent reminder create <groupId> "Standup meeting" -t 1 --time "2026-03-16 09:00" --repeat daily
+
+# List reminders in a group
+zalo-agent reminder list <groupId> -t 1
+
+# View who responded
+zalo-agent reminder responses <reminderId>
+
+# Edit reminder title and time
+zalo-agent reminder edit <reminderId> <groupId> "New title" -t 1 --time "2026-03-17 10:00"
+
+# Remove a reminder
+zalo-agent reminder remove <reminderId> <groupId> -t 1
+```
+
 #### Accounts (`account`)
 
 | Command | Description |
@@ -514,6 +545,27 @@ zalo-agent poll vote <pollId> 123 456
 # Đóng poll
 zalo-agent poll lock <pollId>
 ```
+
+#### 7. Nhắc nhở (Reminder)
+
+```bash
+# Tạo nhắc nhở hàng ngày trong nhóm lúc 9h sáng
+zalo-agent reminder create <groupId> "Họp standup" -t 1 --time "2026-03-16 09:00" --repeat daily
+
+# Xem danh sách nhắc nhở
+zalo-agent reminder list <groupId> -t 1
+
+# Xem ai đã chấp nhận/từ chối
+zalo-agent reminder responses <reminderId>
+
+# Sửa nhắc nhở
+zalo-agent reminder edit <reminderId> <groupId> "Tiêu đề mới" -t 1 --time "2026-03-17 10:00"
+
+# Xóa nhắc nhở
+zalo-agent reminder remove <reminderId> <groupId> -t 1
+```
+
+Chế độ lặp: `none` (không lặp), `daily` (hàng ngày), `weekly` (hàng tuần), `monthly` (hàng tháng)
 
 ### Danh sách lệnh
 

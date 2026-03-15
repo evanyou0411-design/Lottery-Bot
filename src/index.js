@@ -20,6 +20,7 @@ import { registerConvCommands } from "./commands/conv.js";
 import { registerAccountCommands } from "./commands/account.js";
 import { registerProfileCommands } from "./commands/profile.js";
 import { registerPollCommands } from "./commands/poll.js";
+import { registerReminderCommands } from "./commands/reminder.js";
 import { registerListenCommand } from "./commands/listen.js";
 import { autoLogin } from "./core/zalo-client.js";
 import { checkForUpdates, selfUpdate } from "./utils/update-check.js";
@@ -74,6 +75,7 @@ registerConvCommands(program);
 registerAccountCommands(program);
 registerProfileCommands(program);
 registerPollCommands(program);
+registerReminderCommands(program);
 registerListenCommand(program);
 
 program.parse();
