@@ -102,8 +102,18 @@ export function registerProfileCommands(program) {
                     const bio = result?.profile?.status || "(empty)";
                     output({ bio }, program.opts().json, () => info(`Bio: ${bio}`));
                 } else {
-                    const result = await getApi().updateProfileBio(text);
-                    output(result, program.opts().json, () => success(`Bio updated to: "${text}"`));
+                    await getApi().updateProfileBio(text);
+                    // Verify by reading back (Zalo may cache, so check)
+                    const verify = await getApi().fetchAccountInfo();
+                    const newBio = verify?.profile?.status || "";
+                    if (newBio === text) {
+                        output({ bio: newBio }, program.opts().json, () => success(`Bio updated to: "${text}"`));
+                    } else {
+                        output({ bio: newBio, requested: text }, program.opts().json, () => {
+                            success(`Bio update request sent: "${text}"`);
+                            info("Note: Zalo may take time to reflect changes, or bio may not be supported for your account type.");
+                        });
+                    }
                 }
             } catch (e) {
                 error(`Bio update failed: ${e.message}`);
@@ -125,10 +135,16 @@ export function registerProfileCommands(program) {
                 // Fetch current profile to fill missing fields (API requires all 3)
                 const current = await getApi().fetchAccountInfo();
                 const p = current?.profile || {};
+                // Convert sdob (DD/MM/YYYY) to YYYY-MM-DD format required by API
+                let currentDob = "2000-01-01";
+                if (p.sdob) {
+                    const parts = p.sdob.split("/");
+                    if (parts.length === 3) currentDob = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
                 const payload = {
                     profile: {
                         name: opts.name || p.displayName || p.zaloName,
-                        dob: opts.dob || p.sdob || "2000-01-01",
+                        dob: opts.dob || currentDob,
                         gender: opts.gender !== undefined ? Number(opts.gender) : p.gender ?? 0,
                     },
                 };
