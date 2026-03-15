@@ -160,7 +160,7 @@ zalo-agent whoami
 
 | Command | Description |
 |---------|-------------|
-| `msg send <threadId> <text> [-t 0\|1]` | Send text message |
+| `msg send <threadId> <text> [-t 0\|1] [--md] [--style specs...]` | Send text message (with formatting) |
 | `msg send-image <threadId> <paths...> [-t 0\|1] [-m caption]` | Send images |
 | `msg send-file <threadId> <paths...> [-t 0\|1] [-m caption]` | Send files |
 | `msg send-card <threadId> <userId> [-t 0\|1] [--phone NUM]` | Send contact card |
@@ -173,6 +173,30 @@ zalo-agent whoami
 | `msg forward <msgId> <threadId> [-t 0\|1]` | Forward a message |
 
 > `-t 0` = User (default), `-t 1` = Group
+
+**Text formatting with `--md` (markdown mode):**
+```bash
+zalo-agent msg send <threadId> "**Bold** *Italic* __Underline__ ~~Strike~~ {red:Red} {big:BIG}" --md
+```
+
+| Syntax | Style |
+|--------|-------|
+| `**text**` | Bold |
+| `*text*` | Italic |
+| `__text__` | Underline |
+| `~~text~~` | Strikethrough |
+| `{red:text}` | Red text |
+| `{orange:text}` | Orange text |
+| `{yellow:text}` | Yellow text |
+| `{green:text}` | Green text |
+| `{big:text}` | Large font |
+| `{small:text}` | Small font |
+
+**Manual style with `--style` (for agents/automation):**
+```bash
+# Format: start:len:style — style names: bold, italic, underline, strikethrough, red, orange, yellow, green, big, small
+zalo-agent msg send <threadId> "Hello World" --style 0:5:bold 6:5:italic
+```
 
 #### Friends (`friend`)
 

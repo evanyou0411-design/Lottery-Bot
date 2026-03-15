@@ -7,16 +7,99 @@ import { resolve } from "path";
 import { getApi } from "../core/zalo-client.js";
 import { success, error, info, output } from "../utils/output.js";
 
+/**
+ * TextStyle codes matching zca-js TextStyle enum.
+ * Used for --style option and markdown parsing.
+ */
+const TEXT_STYLES = {
+    bold: "b",
+    b: "b",
+    italic: "i",
+    i: "i",
+    underline: "u",
+    u: "u",
+    strikethrough: "s",
+    s: "s",
+    red: "c_db342e",
+    orange: "c_f27806",
+    yellow: "c_f7b503",
+    green: "c_15a85f",
+    small: "f_13",
+    big: "f_18",
+};
+
+/**
+ * Parse markdown-like syntax from message text into plain text + styles array.
+ * Supports: **bold**, *italic*, __underline__, ~~strikethrough~~,
+ *           {red:text}, {orange:text}, {green:text}, {yellow:text},
+ *           {big:text}, {small:text}
+ */
+function parseMarkdownStyles(input) {
+    const styles = [];
+    let plain = input;
+
+    // Process markdown patterns (order matters: ** before *)
+    const patterns = [
+        { regex: /\*\*(.+?)\*\*/g, st: "b" },
+        { regex: /\*(.+?)\*/g, st: "i" },
+        { regex: /__(.+?)__/g, st: "u" },
+        { regex: /~~(.+?)~~/g, st: "s" },
+        { regex: /\{(red|orange|yellow|green|big|small):(.+?)\}/g, st: null },
+    ];
+
+    for (const p of patterns) {
+        let match;
+        // Re-run from scratch each time since offsets shift
+        while ((match = p.regex.exec(plain)) !== null) {
+            const fullMatch = match[0];
+            const start = match.index;
+            let content, st;
+            if (p.st === null) {
+                // Color/size pattern: {color:text}
+                st = TEXT_STYLES[match[1]];
+                content = match[2];
+            } else {
+                st = p.st;
+                content = match[1];
+            }
+            // Replace the markdown syntax with plain content
+            plain = plain.slice(0, start) + content + plain.slice(start + fullMatch.length);
+            styles.push({ start, len: content.length, st });
+            // Reset regex since string changed
+            p.regex.lastIndex = start + content.length;
+        }
+    }
+
+    return { plain, styles };
+}
+
+/**
+ * Parse manual style specs: "start:len:style" → { start, len, st }
+ * Style names: bold, italic, underline, strikethrough, red, orange, yellow, green, big, small
+ */
+function parseStyleSpecs(specs) {
+    return specs
+        .map((spec) => {
+            const [start, len, style] = spec.split(":");
+            const st = TEXT_STYLES[style];
+            if (!st) return null;
+            return { start: Number(start), len: Number(len), st };
+        })
+        .filter(Boolean);
+}
+
 export function registerMsgCommands(program) {
     const msg = program.command("msg").description("Send and manage messages");
 
     msg.command("send <threadId> <message>")
-        .description("Send a text message")
+        .description("Send a text message with optional formatting")
         .option("-t, --type <n>", "Thread type: 0=User, 1=Group", "0")
         .option(
             "--mention <specs...>",
             "Mention users in group message. Format: pos:userId:len (e.g. 0:USER_ID:5). Use userId=-1 for @All.",
         )
+        .option("--style <specs...>", "Text styles. Format: start:len:style (e.g. 0:5:bold 6:5:italic)")
+        .option("--md", "Parse markdown-like formatting: **bold** *italic* __underline__ ~~strike~~ {red:text}")
         .option(
             "--react <icon>",
             "Auto-react to sent message. Codes: :> (haha), /-heart (heart), /-strong (like), :o (wow), :-(( (cry), :-h (angry)",
@@ -29,8 +112,27 @@ export function registerMsgCommands(program) {
                     return { pos: Number(pos), uid, len: Number(len) };
                 });
 
-                // Build message content object if mentions exist
-                const msgContent = mentions.length > 0 ? { msg: message, mentions } : message;
+                // Parse text styles
+                let styles = [];
+                let finalMsg = message;
+
+                if (opts.md) {
+                    // Markdown-like parsing: **bold** *italic* __underline__ ~~strike~~
+                    const parsed = parseMarkdownStyles(message);
+                    finalMsg = parsed.plain;
+                    styles = parsed.styles;
+                }
+
+                if (opts.style) {
+                    // Manual style specs: start:len:style
+                    styles = styles.concat(parseStyleSpecs(opts.style));
+                }
+
+                // Build message content
+                const hasExtras = mentions.length > 0 || styles.length > 0;
+                const msgContent = hasExtras
+                    ? { msg: finalMsg, ...(mentions.length > 0 && { mentions }), ...(styles.length > 0 && { styles }) }
+                    : finalMsg;
 
                 const cliMsgId = String(Date.now());
                 const result = await getApi().sendMessage(msgContent, threadId, Number(opts.type));
