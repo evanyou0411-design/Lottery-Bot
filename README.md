@@ -328,6 +328,29 @@ zalo-agent reminder remove <reminderId> <groupId> -t 1
 | `account info` | Show active account |
 | `account export [ownerId] [-o path]` | Export credentials for transfer |
 
+#### Listener (`listen`)
+
+```bash
+# Listen for messages (default: message + friend events)
+zalo-agent listen
+
+# Filter: DM only, with webhook
+zalo-agent listen -f user -w https://your-n8n.com/webhook/zalo
+
+# Save messages locally as JSONL (one file per thread)
+zalo-agent listen --save ./zalo-logs
+
+# JSON mode for piping + save locally + webhook
+zalo-agent --json listen --save ./zalo-logs -w https://webhook.url
+
+# Auto-accept friend requests
+zalo-agent listen --auto-accept
+```
+
+**Flags:** `-e` events (message,friend,group,reaction), `-f` filter (user,group,all), `-w` webhook URL, `--save <dir>` local JSONL storage, `--no-self` exclude own messages, `--auto-accept` auto-accept friend requests
+
+**JSONL storage format:** One file per thread (`<threadId>.jsonl`), each line is a JSON object with event data + `savedAt` timestamp. Useful as workaround for chat history — Zalo API only returns ~20 recent messages.
+
 ### Multi-Account & Proxy
 
 Each Zalo account can be bound to its own dedicated proxy (1:1 mapping).

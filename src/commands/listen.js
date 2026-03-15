@@ -3,6 +3,8 @@
  * Production-ready with auto-reconnect and re-login.
  */
 
+import { appendFileSync, mkdirSync, existsSync } from "fs";
+import { resolve, join } from "path";
 import { getApi, autoLogin, clearSession } from "../core/zalo-client.js";
 import { success, error, info, warning } from "../utils/output.js";
 
@@ -41,6 +43,7 @@ export function registerListenCommand(program) {
         .option("-w, --webhook <url>", "POST each event as JSON to this URL (for n8n, Make, etc.)")
         .option("--no-self", "Exclude self-sent messages")
         .option("--auto-accept", "Auto-accept incoming friend requests")
+        .option("--save <dir>", "Save messages locally as JSONL files (one file per thread, e.g. --save ./zalo-logs)")
         .action(async (opts) => {
             const jsonMode = program.opts().json;
             const startTime = Date.now();
@@ -65,7 +68,26 @@ export function registerListenCommand(program) {
                 }).catch(() => {});
             }
 
-            /** Output event as JSON or human-readable, then post to webhook */
+            // Setup save directory if --save flag provided
+            let saveDir = null;
+            if (opts.save) {
+                saveDir = resolve(opts.save);
+                if (!existsSync(saveDir)) mkdirSync(saveDir, { recursive: true });
+                info(`Saving messages to: ${saveDir}`);
+            }
+
+            /** Append event to JSONL file (one file per threadId) */
+            function saveEvent(data) {
+                if (!saveDir || !data.threadId) return;
+                const filename = `${data.threadId}.jsonl`;
+                const filepath = join(saveDir, filename);
+                const line = JSON.stringify({ ...data, savedAt: new Date().toISOString() }) + "\n";
+                try {
+                    appendFileSync(filepath, line, "utf-8");
+                } catch {}
+            }
+
+            /** Output event as JSON or human-readable, save locally, then post to webhook */
             function emitEvent(data, humanMsg) {
                 eventCount++;
                 if (jsonMode) {
@@ -73,6 +95,7 @@ export function registerListenCommand(program) {
                 } else {
                     info(humanMsg);
                 }
+                saveEvent(data);
                 postWebhook(data);
             }
 
@@ -224,6 +247,7 @@ export function registerListenCommand(program) {
                 info("Auto-reconnect enabled.");
                 if (opts.filter !== "all") info(`Message filter: ${opts.filter}`);
                 if (opts.webhook) info(`Webhook: ${opts.webhook}`);
+                if (saveDir) info(`Save dir: ${saveDir} (JSONL per thread)`);
                 if (opts.autoAccept) info("Auto-accept friend requests: ON");
             } catch (e) {
                 error(`Listen failed: ${e.message}`);
@@ -237,6 +261,7 @@ export function registerListenCommand(program) {
                         getApi().listener.stop();
                     } catch {}
                     info(`Stopped. Uptime: ${uptime()}, events: ${eventCount}, reconnects: ${reconnectCount}`);
+                    if (saveDir) info(`Messages saved to: ${saveDir}`);
                     resolve();
                 });
             });
