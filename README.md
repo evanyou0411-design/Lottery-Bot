@@ -12,6 +12,8 @@
 CLI tool for Zalo automation — multi-account, proxy support, bank transfers, QR payments.
 Built on [zca-js](https://github.com/RFS-ADRENO/zca-js).
 
+**[Tiếng Việt](https://github.com/PhucMPham/zalo-agent-cli/wiki/Ti%E1%BA%BFng-Vi%E1%BB%87t)** | **[English](#quick-start)**
+
 > **Warning:** Unofficial Zalo API — your account may be banned. Use at your own risk.
 
 ---
