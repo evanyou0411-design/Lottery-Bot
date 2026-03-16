@@ -51,9 +51,10 @@ zalo-agent login --credentials ./creds.json -p "http://user:pass@host:port"
 ```
 
 ### Credential Security
-- `chmod 600 creds.json` — restrict access
+- Credentials managed entirely by `zalo-agent` CLI — this skill never reads credential contents directly
+- `chmod 600 creds.json` — restrict file permissions
 - Never commit to git (add to .gitignore)
-- Contains IMEI + cookies — treat as password
+- Treat credential files as secrets — contains session tokens
 - Each file = 1 device identity
 
 ## Method 3: Multi-Account
