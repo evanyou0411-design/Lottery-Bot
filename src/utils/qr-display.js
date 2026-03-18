@@ -59,12 +59,14 @@ export function displayQR(event) {
     // JSON mode: structured output for AI agents — no terminal escapes, no noise
     if (jsonMode) {
         if (imageB64) {
-            console.log(JSON.stringify({
-                event: "qr",
-                image: imageB64,
-                file: QR_PATH,
-                dataUrl: `data:image/png;base64,${imageB64}`,
-            }));
+            console.log(
+                JSON.stringify({
+                    event: "qr",
+                    image: imageB64,
+                    file: QR_PATH,
+                    dataUrl: `data:image/png;base64,${imageB64}`,
+                }),
+            );
         }
         return;
     }

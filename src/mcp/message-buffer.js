@@ -41,9 +41,7 @@ export class MessageBuffer {
      * @returns {{ messages: Array, cursor: number, hasMore: boolean }}
      */
     read(threadId, since = 0, maxCount = 20) {
-        const sources = threadId
-            ? [this._threads.get(threadId)].filter(Boolean)
-            : Array.from(this._threads.values());
+        const sources = threadId ? [this._threads.get(threadId)].filter(Boolean) : Array.from(this._threads.values());
 
         // Collect all messages after cursor, sorted by cursor
         let all = [];

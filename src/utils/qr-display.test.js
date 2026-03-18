@@ -9,8 +9,7 @@ import { existsSync, unlinkSync, mkdirSync } from "fs";
 import { dirname } from "path";
 
 // Tiny valid 1x1 white PNG as base64 (for testing without real QR)
-const TINY_PNG_B64 =
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
+const TINY_PNG_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
 
 describe("displayQR", () => {
     let originalLog;

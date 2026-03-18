@@ -31,9 +31,7 @@ function normalizeMessage(msg) {
         threadType: msg.type === 0 ? "dm" : "group",
         senderId: msg.data.uidFrom || null,
         senderName: msg.data.dName || null,
-        text: isText
-            ? rawContent
-            : rawContent?.title || rawContent?.href || `[${msg.data.msgType || "attachment"}]`,
+        text: isText ? rawContent : rawContent?.title || rawContent?.href || `[${msg.data.msgType || "attachment"}]`,
         timestamp: Date.now(),
         type: isText ? "text" : msg.data.msgType || "attachment",
         attachment:
@@ -115,9 +113,7 @@ export function registerMCPCommands(program) {
 
                     buffer.push(normalized.threadId, normalized);
                     notifier.onMessage(normalized);
-                    console.error(
-                        `[mcp] Buffered ${normalized.threadType} msg from ${normalized.threadId}`,
-                    );
+                    console.error(`[mcp] Buffered ${normalized.threadType} msg from ${normalized.threadId}`);
                 });
 
                 api.listener.on("connected", () => {

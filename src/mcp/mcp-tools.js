@@ -46,23 +46,9 @@ export function registerTools(server, api, buffer, filter, config) {
             description:
                 "Get messages from Zalo threads (DMs and groups). Returns buffered messages since last read. Use 'since' cursor from previous response for incremental polling.",
             inputSchema: z.object({
-                threadId: z
-                    .string()
-                    .optional()
-                    .describe("Thread ID to read from. Omit for all watched threads."),
-                since: z
-                    .number()
-                    .int()
-                    .min(0)
-                    .default(0)
-                    .describe("Cursor from previous read for incremental polling"),
-                limit: z
-                    .number()
-                    .int()
-                    .min(1)
-                    .max(100)
-                    .default(maxPerPoll)
-                    .describe("Max messages to return"),
+                threadId: z.string().optional().describe("Thread ID to read from. Omit for all watched threads."),
+                since: z.number().int().min(0).default(0).describe("Cursor from previous read for incremental polling"),
+                limit: z.number().int().min(1).max(100).default(maxPerPoll).describe("Max messages to return"),
             }),
         },
         async ({ threadId, since, limit }) => {
@@ -81,8 +67,7 @@ export function registerTools(server, api, buffer, filter, config) {
         "zalo_send_message",
         {
             title: "Send Zalo Message",
-            description:
-                "Send a text message to a Zalo thread (DM or group). threadType: 0=DM(User), 1=Group.",
+            description: "Send a text message to a Zalo thread (DM or group). threadType: 0=DM(User), 1=Group.",
             inputSchema: z.object({
                 threadId: z.string().describe("Thread ID to send message to"),
                 text: z.string().min(1).describe("Message text to send"),
@@ -131,10 +116,7 @@ export function registerTools(server, api, buffer, filter, config) {
                     const threadType = thread?.messages?.[0]?.threadType ?? "unknown";
                     return { ...t, threadType };
                 });
-                const filtered =
-                    type === "all"
-                        ? enriched
-                        : enriched.filter((t) => t.threadType === type);
+                const filtered = type === "all" ? enriched : enriched.filter((t) => t.threadType === type);
                 return ok({ threads: filtered, total: filtered.length });
             } catch (e) {
                 console.error("[mcp-tools] zalo_list_threads error:", e.message);

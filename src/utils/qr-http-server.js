@@ -134,12 +134,14 @@ setInterval(async()=>{
         } catch {}
 
         if (jsonMode) {
-            console.log(JSON.stringify({
-                event: "qr_server",
-                port: actualPort,
-                localUrl: `http://localhost:${actualPort}/qr`,
-                publicUrl: publicIp ? `http://${publicIp}:${actualPort}/qr` : null,
-            }));
+            console.log(
+                JSON.stringify({
+                    event: "qr_server",
+                    port: actualPort,
+                    localUrl: `http://localhost:${actualPort}/qr`,
+                    publicUrl: publicIp ? `http://${publicIp}:${actualPort}/qr` : null,
+                }),
+            );
         } else {
             info(`QR available at: http://localhost:${actualPort}/qr`);
             if (publicIp) info(`On VPS, open: http://${publicIp}:${actualPort}/qr`);
