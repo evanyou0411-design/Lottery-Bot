@@ -5,6 +5,12 @@
 
 import { parseDuration } from "./mcp-config.js";
 
+/** Emoji prefix per message type for notification previews */
+const TYPE_EMOJI = { text: "💬", image: "📷", file: "📎", link: "🔗", video: "🎬", audio: "🎵", gif: "🎞️" };
+
+/** Vietnamese label per message type for notification breakdown */
+const TYPE_LABEL = { text: "text", image: "ảnh", file: "file", link: "link", video: "video", audio: "audio", gif: "gif" };
+
 export class ZaloNotifier {
     /**
      * @param {object} api - zca-js API instance
@@ -60,13 +66,19 @@ export class ZaloNotifier {
         if (this._pending.length === 0) return;
 
         const count = this._pending.length;
+        const typeBreakdown = this._buildTypeBreakdown(this._pending);
         const preview = this._pending
             .slice(0, 3) // Show at most 3 message previews
-            .map((m) => `- ${m.senderName || m.senderId}: ${(m.text || "").slice(0, 50)}`)
+            .map((m) => {
+                const prefix = TYPE_EMOJI[m.type] || "💬";
+                const sender = m.senderName || m.senderId;
+                const body = m.type === "text" ? (m.text || "").slice(0, 50) : `[${TYPE_LABEL[m.type] || m.type}]`;
+                return `- ${sender}: ${prefix} ${body}`;
+            })
             .join("\n");
 
         const suffix = count > 3 ? `\n...và ${count - 3} tin nhắn khác` : "";
-        const text = `🔔 ${count} tin nhắn mới trong ${this._formatWindow()}:\n${preview}${suffix}`;
+        const text = `🔔 ${count} tin nhắn mới [${typeBreakdown}] trong ${this._formatWindow()}:\n${preview}${suffix}`;
 
         try {
             // threadType 1 = Group conversation
@@ -76,6 +88,22 @@ export class ZaloNotifier {
         }
 
         this._pending = [];
+    }
+
+    /**
+     * Build a human-readable type breakdown string, e.g. "2 text, 1 ảnh".
+     * @param {object[]} messages - Array of normalized messages
+     * @returns {string}
+     */
+    _buildTypeBreakdown(messages) {
+        const counts = {};
+        for (const m of messages) {
+            const t = m.type || "text";
+            counts[t] = (counts[t] || 0) + 1;
+        }
+        return Object.entries(counts)
+            .map(([type, n]) => `${n} ${TYPE_LABEL[type] || type}`)
+            .join(", ");
     }
 
     /** Format cooldown duration as human-readable string (e.g. "5 phút", "1h") */
