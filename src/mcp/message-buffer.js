@@ -44,7 +44,7 @@ export class MessageBuffer {
         const sources = threadId ? [this._threads.get(threadId)].filter(Boolean) : Array.from(this._threads.values());
 
         // Collect all messages after cursor, sorted by cursor
-        let all = [];
+        const all = [];
         for (const thread of sources) {
             for (const msg of thread.messages) {
                 if (msg._cursor > since) all.push(msg);

@@ -38,7 +38,7 @@ export function registerPollCommands(program) {
                     success(`Poll created: "${question}"`);
                     info(`Poll ID: ${result.poll_id}`);
                     if (result.options) {
-                        result.options.forEach((o, i) => console.log(`  [${o.option_id}] ${o.content}`));
+                        result.options.forEach((o) => console.log(`  [${o.option_id}] ${o.content}`));
                     }
                 });
             } catch (e) {

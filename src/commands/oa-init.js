@@ -140,7 +140,7 @@ function createWebhookServer(oaId) {
                     const msg = event.message?.text || "";
                     if (eventName === "user_send_text") info(`[text] ${sender}: ${msg}`);
                     else info(`[${eventName}] from ${sender}`);
-                } catch (_) {
+                } catch {
                     /* test ping */
                 }
                 res.writeHead(200, { "Content-Type": "application/json" });

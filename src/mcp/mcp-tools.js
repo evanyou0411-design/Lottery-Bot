@@ -7,7 +7,6 @@ import { z } from "zod";
 
 /** Thread type constants matching zca-js ThreadType enum */
 const THREAD_USER = 0;
-const THREAD_GROUP = 1;
 
 /**
  * Wrap a result object into MCP tool content format.

@@ -271,7 +271,6 @@ export async function removeFollowerFromTag(userId, tagName, oaId = "default") {
 /** Upload image to OA (returns attachment_id). */
 export async function uploadImage(filePath, oaId = "default") {
     const token = getToken(oaId);
-    const { default: FormData } = await import("node-fetch");
     // Use native FormData-like via node-fetch's Blob
     const fileData = fs.readFileSync(filePath);
     const blob = new (await import("node:buffer")).Blob([fileData]);

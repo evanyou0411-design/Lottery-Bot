@@ -10,7 +10,6 @@ import {
     saveOAToken,
     saveOACreds,
     loadOACreds,
-    loadOAToken,
     getOAuthUrl,
     exchangeCode,
     refreshAccessToken,
@@ -208,7 +207,7 @@ export function registerOACommands(program) {
                     const d = result.data || result;
                     info(`OA: ${d.name || "N/A"} (ID: ${d.oa_id || "N/A"})`);
                     if (d.description) info(`Description: ${d.description}`);
-                    if (d.num_follower != null) info(`Followers: ${d.num_follower}`);
+                    if (d.num_follower !== null && d.num_follower !== undefined) info(`Followers: ${d.num_follower}`);
                 });
             } catch (e) {
                 error(e.message);
