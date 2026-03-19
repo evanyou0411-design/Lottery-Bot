@@ -1,9 +1,10 @@
 /**
  * MCP tool registrations for Zalo message access and sending.
- * Registers 5 tools: zalo_get_messages, zalo_send_message, zalo_list_threads, zalo_search_threads, zalo_mark_read.
+ * Registers 6 tools: zalo_get_messages, zalo_send_message, zalo_list_threads, zalo_search_threads, zalo_mark_read, zalo_view_image.
  */
 
 import { z } from "zod";
+import { downloadImage } from "./image-downloader.js";
 
 /** Thread type constants matching zca-js ThreadType enum */
 const THREAD_USER = 0;
@@ -189,6 +190,50 @@ export function registerTools(server, api, buffer, filter, config, nameCache) {
                 return ok({ success: true, discarded });
             } catch (e) {
                 console.error("[mcp-tools] zalo_mark_read error:", e.message);
+                return err(e.message);
+            }
+        },
+    );
+
+    // --- zalo_view_image ---
+    const imgConfig = config.images || {};
+    server.registerTool(
+        "zalo_view_image",
+        {
+            title: "View Zalo Image",
+            description:
+                "Download a Zalo image to local filesystem and optionally open it with system viewer. " +
+                "Images are organized by thread folder and named with date/sender metadata. " +
+                "Pass the message ID from zalo_get_messages to download its attached image.",
+            inputSchema: z.object({
+                messageId: z.string().describe("Message ID from zalo_get_messages that has an image attachment"),
+                threadId: z.string().optional().describe("Thread ID to search in. Omit to search all threads."),
+                autoOpen: z
+                    .boolean()
+                    .default(imgConfig.autoOpen ?? true)
+                    .describe("Open image with system viewer after download"),
+            }),
+        },
+        async ({ messageId, threadId, autoOpen }) => {
+            try {
+                // Find the message in the buffer by ID
+                const allMessages = buffer.read(threadId, 0, 9999).messages;
+                const message = allMessages.find((m) => m.id === messageId);
+                if (!message) return err(`Message ${messageId} not found in buffer`);
+                if (!message.attachment?.url) return err(`Message ${messageId} has no image attachment`);
+
+                // Resolve thread name for folder organization
+                const threadName = nameCache?.get(message.threadId)?.name || null;
+
+                const result = await downloadImage(message, {
+                    downloadDir: imgConfig.downloadDir || undefined,
+                    autoOpen,
+                    threadName,
+                });
+
+                return ok(result);
+            } catch (e) {
+                console.error("[mcp-tools] zalo_view_image error:", e.message);
                 return err(e.message);
             }
         },

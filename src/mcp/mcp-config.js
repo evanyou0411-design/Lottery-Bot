@@ -26,6 +26,10 @@ export function getDefaultConfig() {
             bufferMaxAge: "2h",
             bufferMaxSize: 500,
         },
+        images: {
+            downloadDir: null, // default: ~/.zalo-agent-cli/images/
+            autoOpen: true,
+        },
     };
 }
 
@@ -44,6 +48,7 @@ export function loadMCPConfig() {
             ...saved,
             notify: { ...defaults.notify, ...saved.notify },
             limits: { ...defaults.limits, ...saved.limits },
+            images: { ...defaults.images, ...saved.images },
         };
     } catch {
         // File doesn't exist or invalid JSON — use defaults
