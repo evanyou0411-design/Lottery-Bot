@@ -191,6 +191,36 @@ describe("ZaloNotifier _flush notification format", () => {
         await wait(30);
         assert.ok(calls[0].text.includes("2"));
     });
+
+    it("shows type breakdown with mixed media types", async () => {
+        const { api, calls } = makeSpy();
+        const n = new ZaloNotifier(api, enabledConfig());
+        n.onMessage(dmMsg("hello", { type: "text" }));
+        n.onMessage(dmMsg("[image]", { type: "image" }));
+        n.onMessage(dmMsg("[voice]", { type: "voice" }));
+        await wait(30);
+        assert.ok(calls[0].text.includes("1 text"));
+        assert.ok(calls[0].text.includes("1 ảnh"));
+        assert.ok(calls[0].text.includes("1 voice"));
+    });
+
+    it("uses emoji prefix for audio and video types", async () => {
+        const { api, calls } = makeSpy();
+        const n = new ZaloNotifier(api, enabledConfig());
+        n.onMessage(dmMsg("[audio]", { type: "audio", senderName: "Bob" }));
+        n.onMessage(dmMsg("[video]", { type: "video", senderName: "Eve" }));
+        await wait(30);
+        assert.ok(calls[0].text.includes("🎵"));
+        assert.ok(calls[0].text.includes("🎬"));
+    });
+
+    it("uses microphone emoji for voice messages", async () => {
+        const { api, calls } = makeSpy();
+        const n = new ZaloNotifier(api, enabledConfig());
+        n.onMessage(dmMsg("[voice]", { type: "voice" }));
+        await wait(30);
+        assert.ok(calls[0].text.includes("🎤"));
+    });
 });
 
 describe("ZaloNotifier cooldown batching", () => {
