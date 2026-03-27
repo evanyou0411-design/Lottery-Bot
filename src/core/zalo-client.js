@@ -5,6 +5,8 @@
 
 import fs from "fs";
 import { Zalo, LoginQRCallbackEventType } from "zca-js";
+import { HttpsProxyAgent } from "https-proxy-agent";
+import { ProxyAgent } from "undici";
 import { getActive } from "./accounts.js";
 import { loadCredentials } from "./credentials.js";
 import { info } from "../utils/output.js";
@@ -89,6 +91,15 @@ export function isLoggedIn() {
     return _api !== null;
 }
 
+/**
+ * Create a proxy-aware fetch that uses undici ProxyAgent dispatcher.
+ * Native Node.js fetch ignores the `agent` option — must use `dispatcher`.
+ */
+function createProxyFetch(proxyUrl) {
+    const dispatcher = new ProxyAgent(proxyUrl);
+    return (url, init = {}) => fetch(url, { ...init, dispatcher });
+}
+
 /** Create a Zalo instance with optional proxy. Suppress logs in JSON mode. */
 function createZalo(proxyUrl) {
     const opts = {
@@ -97,7 +108,9 @@ function createZalo(proxyUrl) {
         imageMetadataGetter: readImageMetadata,
     };
     if (proxyUrl) {
-        opts.proxy = proxyUrl;
+        // HttpsProxyAgent for WebSocket (ws lib), ProxyAgent dispatcher for HTTP fetch
+        opts.agent = new HttpsProxyAgent(proxyUrl);
+        opts.polyfill = createProxyFetch(proxyUrl);
     }
     return new Zalo(opts);
 }
