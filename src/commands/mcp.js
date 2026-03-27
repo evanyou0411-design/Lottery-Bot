@@ -204,7 +204,9 @@ export function registerMCPCommands(program) {
 
             // Graceful shutdown on SIGINT
             process.on("SIGINT", () => {
-                try { getApi().listener.stop(); } catch {}
+                try {
+                    getApi().listener.stop();
+                } catch {}
                 notifier?.destroy();
                 httpServer?.close();
                 process.exit(0);
